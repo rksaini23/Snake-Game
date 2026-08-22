@@ -18,7 +18,7 @@ const rows = Math.floor(board.clientHeight/blockHeight);
 const cols = Math.floor(board.clientWidth/blockwidth);
 
 const blocks = [];
-let snake = [{x:1,y:3},{x:1,y:4},{x:1,y:5}];
+let snake = [{x:1,y:5},{x:1,y:4},{x:1,y:3}];
 let direction = "right";
 let food = {x:Math.floor(Math.random()*rows), y:Math.floor(Math.random()*cols)};
 let intervalId = null;
@@ -83,18 +83,27 @@ function render(){
         endGame.style.display = "flex";
         return;
     }
+    
+    // if snake bites itself
+    for(let i=1; i<snake.length; i++){
+        if(head.x === snake[i].x && head.y === snake[i].y){
+            clearInterval(intervalId);
+            clearInterval(timerId);
+
+            modal.style.display = "flex";
+            startGame.style.display = "none";
+            endGame.style.display = "flex";
+
+            return;
+        }
+    }
+
     snake.unshift(head);
     snake.pop();
     
     snake.forEach(segment=>{
         blocks[`${segment.x}-${segment.y}`].classList.add("fill");
     });
-
-    // if snake bits itself
-    // snake.forEach(segment=>{
-    //     if(blocks[`${segment.x}-${segment.y}`]===`${head.x}-${head.y}`)
-    //     restartGame();
-    // });
 }
 
 // functionality of start button
@@ -131,8 +140,22 @@ function restartGame(){
     scoreElement.textContent = score;
     timeElement.textContent = time;
 
+    // Restarting timer
+    timerId = setInterval(()=>{
+        let [min,sec] = time.split("-").map(Number);
+        if(sec==59){
+            min+=1;
+            sec=0;
+        }
+        else
+        sec+=1;
+
+        time = `${min}-${sec}`;
+        timeElement.textContent = time;  
+    },1000);
+
     // resetting the snake
-    snake = [{x:1,y:3},{x:1,y:4},{x:1,y:5}];
+    snake = [{x:1,y:5},{x:1,y:4},{x:1,y:3}];
     food = {x:Math.floor(Math.random()*rows), y:Math.floor(Math.random()*cols)};
     direction = "right";
     intervalId = setInterval(() => {
@@ -143,12 +166,32 @@ function restartGame(){
 
 // fetching the direction through arrow keys from the keyboard
 addEventListener("keydown",(event)=>{
-    if(event.key === "ArrowUp")
-    direction = "up";
-    if(event.key === "ArrowDown")
-    direction = "down";
-    if(event.key === "ArrowRight")
-    direction = "right";
-    if(event.key === "ArrowLeft")
-    direction = "left";
+    if(event.key === "ArrowUp"){
+        if(direction==="down")
+        direction = "down";
+        else
+        direction = "up";
+    }
+    
+    if(event.key === "ArrowDown"){
+        if(direction==="up")
+        direction = "up";
+        else
+        direction = "down";
+    }
+   
+    if(event.key === "ArrowRight"){
+        if(direction==="left")
+        direction = "left";
+        else
+        direction = "right";
+    }
+ 
+    if(event.key === "ArrowLeft"){
+        if(direction==="right")
+        direction = "right";
+        else
+        direction = "left";
+    }
+    
 });

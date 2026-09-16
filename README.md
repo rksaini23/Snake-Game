@@ -43,7 +43,7 @@ A simple Snake Game built using **HTML, CSS, and JavaScript** as a project to re
 
 1. Clone the repository.
 2. Open the project folder.
-3. Open `index.html` in your browser.
+3. Open `project1.html` in your browser.
 
 ## Author
 
